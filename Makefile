@@ -1,3 +1,6 @@
+-include .env
+export
+
 OS := $(shell go env GOOS)
 ARCH := $(shell go env GOARCH)
 
@@ -17,6 +20,9 @@ check-compose:
 check-env-database-url:
 	@test -n "$$DATABASE_URL" || (echo "DATABASE_URL is not set"; exit 1)
 
+check-env-migrate-force-version:
+	@test -n "$$MIGRATE_FORCE_VERSION" || (echo "MIGRATE_FORCE_VERSION is not set"; exit 1)
+
 install-golangci:
 	@command -v golangci-lint >/dev/null 2>&1 || { \
 		echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION)..."; \
@@ -26,8 +32,8 @@ install-golangci:
 install-golang-migrate:
 	@command -v migrate -version >/dev/null 2>&1 || { \
 		echo "Installing golang-migrate $(GOLANG_MIGRATE_VERSION)..."; \
-		mkdir -p ./bin; \
-		curl -sSL https://github.com/golang-migrate/migrate/releases/download/v$(GOLANG_MIGRATE_VERSION)/migrate.$(OS)-$(ARCH).tar.gz | tar xz -C ./bin; \
+		mkdir -p ./.tmp/golang-migrate; \
+		curl -sSL https://github.com/golang-migrate/migrate/releases/download/v$(GOLANG_MIGRATE_VERSION)/migrate.$(OS)-$(ARCH).tar.gz | tar xz -C ./.tmp/golang-migrate; \
 	}
 
 # ----- Docker Compose -----
@@ -62,8 +68,13 @@ lint-api: install-golangci
 
 # ----- Migration / DB -----
 
+MIGRATE = $(shell command -v migrate 2>/dev/null || echo .tmp/golang-migrate/migrate)
+
 db-migrate-up: check-env-database-url install-golang-migrate
-	./bin/migrate -source file://migrations -database "$$DATABASE_URL" up
+	$(MIGRATE) -source file://migrations -database "$$DATABASE_URL" up
 
 db-migrate-down: check-env-database-url install-golang-migrate
-	./bin/migrate -source file://migrations -database "$$DATABASE_URL" down
+	$(MIGRATE) -source file://migrations -database "$$DATABASE_URL" down 1
+
+db-migrate-force: check-env-migrate-force-version check-env-database-url install-golang-migrate
+	$(MIGRATE) -source file://migrations -database "$$DATABASE_URL" force $$MIGRATE_FORCE_VERSION

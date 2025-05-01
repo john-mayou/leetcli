@@ -13,3 +13,10 @@ func FakeUser() *model.User {
 		Email:    "test_" + uuid.NewString() + "@example.com",
 	}
 }
+
+func FakeProblem() *model.Problem {
+	return &model.Problem{
+		ID:   uuid.NewString(),
+		Slug: "testslug_" + uuid.NewString(),
+	}
+}
