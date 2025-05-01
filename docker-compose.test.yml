@@ -1,0 +1,47 @@
+x-env: ENV=test
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: leetcli_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: volume
+        source: "" # so no data is persisted
+        target: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d leetcli_test"]
+      interval: 1s
+      timeout: 5s
+      retries: 3
+    profiles: ["api", "full"]
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      - ENV=test
+      - PORT=8080
+      - DATABASE_URL=postgres://postgres:password@db:5432/leetcli_test?sslmode=disable
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    profiles: ["api", "full"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      - NODE_ENV=test
+      - NEXT_PUBLIC_NODE_ENV=test
+      - BASE_API_URL=http://api:8080
+    ports:
+      - "3000:3000"
+    profiles: ["full"]
