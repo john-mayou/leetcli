@@ -6,15 +6,9 @@ import (
 )
 
 type Config struct {
-	Env                string
-	Port               string
-	DbURL              string
-	RedisURL           string
-	FrontendURL        string
-	JWTSecret          string
-	GithubClientID     string
-	GithubClientSecret string
-	GithubRedirectURI  string
+	Env         string
+	Port        string
+	DatabaseURL string
 }
 
 func LoadConfig() (*Config, error) {
@@ -28,51 +22,15 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
-	dbUrl, err := getEnv("DATABASE_URL")
-	if err != nil {
-		return nil, err
-	}
-
-	redisUrl, err := getEnv("REDIS_URL")
-	if err != nil {
-		return nil, err
-	}
-
-	frontendUrl, err := getEnv("FRONTEND_URL")
-	if err != nil {
-		return nil, err
-	}
-
-	jwtSecret, err := getEnv("JWT_SECRET")
-	if err != nil {
-		return nil, err
-	}
-
-	githubClientID, err := getEnv("GITHUB_CLIENT_ID")
-	if err != nil {
-		return nil, err
-	}
-
-	githubClientSecret, err := getEnv("GITHUB_CLIENT_SECRET")
-	if err != nil {
-		return nil, err
-	}
-
-	githubRedirectURI, err := getEnv("GITHUB_REDIRECT_URI")
+	databaseUrl, err := getEnv("DATABASE_URL")
 	if err != nil {
 		return nil, err
 	}
 
 	return &Config{
-		Env:                env,
-		Port:               port,
-		DbURL:              dbUrl,
-		RedisURL:           redisUrl,
-		FrontendURL:        frontendUrl,
-		JWTSecret:          jwtSecret,
-		GithubClientID:     githubClientID,
-		GithubClientSecret: githubClientSecret,
-		GithubRedirectURI:  githubRedirectURI,
+		Env:         env,
+		Port:        port,
+		DatabaseURL: databaseUrl,
 	}, nil
 }
 
