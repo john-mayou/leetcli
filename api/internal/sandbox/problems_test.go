@@ -22,7 +22,7 @@ func TestLoadProblemsMeta(t *testing.T) {
 	actual, err := json.MarshalIndent(meta, "", "  ")
 	require.NoError(t, err)
 
-	golden := filepath.Join("testdata", "loadProblemsMeta.txt")
+	golden := filepath.Join("testdata", "LoadProblemsMeta.txt")
 	if *update {
 		os.WriteFile(golden, actual, 0644)
 	}
