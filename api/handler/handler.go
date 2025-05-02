@@ -7,12 +7,14 @@ import (
 
 	"github.com/john-mayou/leetcli/config"
 	"github.com/john-mayou/leetcli/db"
+	"github.com/john-mayou/leetcli/internal/metric"
 )
 
 type Handler struct {
 	Config     *config.Config
 	DBClient   db.DBClient
 	HTTPClient *http.Client
+	Metrics    *metric.MetricsHandler
 	Logger     *log.Logger
 }
 
@@ -20,6 +22,7 @@ type HandlerOpts struct {
 	Config     *config.Config
 	DBClient   db.DBClient
 	HTTPClient *http.Client
+	Metrics    *metric.MetricsHandler
 	Logger     *log.Logger
 }
 
@@ -33,6 +36,9 @@ func NewHandler(opts *HandlerOpts) (*Handler, error) {
 	if opts.HTTPClient == nil {
 		return nil, errors.New("handler: http client cannot be nil")
 	}
+	if opts.Metrics == nil {
+		return nil, errors.New("handler: metrics handler cannot be nil")
+	}
 	if opts.Logger == nil {
 		return nil, errors.New("handler: logger cannot be nil")
 	}
@@ -41,6 +47,7 @@ func NewHandler(opts *HandlerOpts) (*Handler, error) {
 		Config:     opts.Config,
 		DBClient:   opts.DBClient,
 		HTTPClient: opts.HTTPClient,
+		Metrics:    opts.Metrics,
 		Logger:     opts.Logger,
 	}, nil
 }
@@ -48,6 +55,9 @@ func NewHandler(opts *HandlerOpts) (*Handler, error) {
 func NewTestHandler(opts *HandlerOpts) *Handler {
 	if opts == nil {
 		opts = &HandlerOpts{}
+	}
+	if opts.Metrics == nil {
+		opts.Metrics = metric.NewTestMetricsHandler()
 	}
 	if opts.Logger == nil {
 		opts.Logger = log.Default()
@@ -57,6 +67,7 @@ func NewTestHandler(opts *HandlerOpts) *Handler {
 		Config:     opts.Config,
 		DBClient:   opts.DBClient,
 		HTTPClient: opts.HTTPClient,
+		Metrics:    opts.Metrics,
 		Logger:     opts.Logger,
 	}
 }
