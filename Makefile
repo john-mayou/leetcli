@@ -30,11 +30,11 @@ install-golangci:
 	}
 
 install-golang-migrate:
-	@command -v migrate -version >/dev/null 2>&1 || { \
+	@if ! command -v migrate >/dev/null 2>&1 && [ ! -x .tmp/golang-migrate/migrate ]; then \
 		echo "Installing golang-migrate $(GOLANG_MIGRATE_VERSION)..."; \
 		mkdir -p ./.tmp/golang-migrate; \
 		curl -sSL https://github.com/golang-migrate/migrate/releases/download/v$(GOLANG_MIGRATE_VERSION)/migrate.$(OS)-$(ARCH).tar.gz | tar xz -C ./.tmp/golang-migrate; \
-	}
+	fi
 
 # ----- Docker Compose -----
 

@@ -20,3 +20,15 @@ func FakeProblem() *model.Problem {
 		Slug: "testslug_" + uuid.NewString(),
 	}
 }
+
+func FakeProblemSubmission(problemID, userID string) *model.ProblemSubmission {
+	return &model.ProblemSubmission{
+		ID:         uuid.NewString(),
+		ProblemID:  problemID,
+		UserID:     userID,
+		Status:     model.ProblemSubmissionStutusPending,
+		Code:       "testcode_" + uuid.NewString(),
+		Output:     "testoutput_" + uuid.NewString(),
+		ExecTimeMs: 1,
+	}
+}
