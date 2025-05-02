@@ -12,14 +12,16 @@ import (
 const MONTH = 30 * 24 * time.Hour
 
 type TokenClaims struct {
-	UserID     string
-	Expiration time.Time
+	UserID string `json:"user_id"`
+	jwt.RegisteredClaims
 }
 
 func GenerateJWT(cfg *config.Config, now time.Time, userId string) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id":    userId,
-		"expiration": now.Add(MONTH).Unix(),
+	claims := TokenClaims{
+		UserID: userId,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(now.Add(MONTH)),
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -27,47 +29,26 @@ func GenerateJWT(cfg *config.Config, now time.Time, userId string) (string, erro
 }
 
 func ValidateJWT(cfg *config.Config, now time.Time, tokenStr string) (*TokenClaims, error) {
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(cfg.JWTSecret), nil
-	})
+	}, jwt.WithTimeFunc(func() time.Time { return now }))
 	if err != nil {
 		return nil, err
 	}
 	if !token.Valid {
-		return nil, errors.New("invalid token")
+		return nil, errors.New("invalid or expired token")
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(*TokenClaims)
 	if !ok {
-		return nil, errors.New("invalid claims type")
+		return nil, fmt.Errorf("invalid claim structure: %v", token.Claims)
+	}
+	if claims.ExpiresAt == nil {
+		return nil, errors.New("missing valid exp")
+	}
+	if claims.UserID == "" {
+		return nil, errors.New("missing valid user_id")
 	}
 
-	// user_id
-	userId, ok := claims["user_id"]
-	if !ok {
-		return nil, fmt.Errorf("expected to find 'user_id' in claims")
-	}
-	userIdString, ok := userId.(string)
-	if !ok || userIdString == "" {
-		return nil, fmt.Errorf("expected to find 'user_id' that is a non empty string")
-	}
-
-	// expiration
-	expirationVal, ok := claims["expiration"]
-	if !ok {
-		return nil, fmt.Errorf("expected to find 'expiration' in claims: %v", claims)
-	}
-	expirationInt, ok := expirationVal.(float64)
-	if !ok {
-		return nil, fmt.Errorf("'expiration' claim is not a number: %v", expirationVal)
-	}
-	expirationUnix := int64(expirationInt)
-	if expirationUnix < now.Unix() {
-		return nil, errors.New("expired jwt token")
-	}
-
-	return &TokenClaims{
-		UserID:     userIdString,
-		Expiration: time.Unix(expirationUnix, 0),
-	}, nil
+	return claims, nil
 }

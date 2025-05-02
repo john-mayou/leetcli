@@ -25,7 +25,7 @@ func TestGenerateJWT(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, "userid", claims.UserID)
-	require.Equal(t, now.Add(30*24*time.Hour).Unix(), claims.Expiration.Unix())
+	require.Equal(t, now.Add(30*24*time.Hour).Unix(), claims.RegisteredClaims.ExpiresAt.Unix())
 }
 
 func TestValidateJWT(t *testing.T) {
@@ -40,46 +40,38 @@ func TestValidateJWT(t *testing.T) {
 	}{
 		"valid token": {
 			claims: jwt.MapClaims{
-				"user_id":    "userid",
-				"expiration": now.Add(1 * time.Hour).Unix(),
+				"user_id": "userid",
+				"exp":     now.Add(1 * time.Hour).Unix(),
 			},
 			secret:      "testsecret",
 			expectError: false,
 		},
 		"expired token": {
 			claims: jwt.MapClaims{
-				"user_id":    "userid",
-				"expiration": now.Add(-1 * time.Hour).Unix(),
+				"user_id": "userid",
+				"exp":     now.Add(-1 * time.Hour).Unix(),
 			},
 			secret:      "testsecret",
 			expectError: true,
 		},
 		"invalid signature": {
 			claims: jwt.MapClaims{
-				"user_id":    "userid",
-				"expiration": now.Add(1 * time.Hour).Unix(),
+				"user_id": "userid",
+				"exp":     now.Add(1 * time.Hour).Unix(),
 			},
 			secret:      "invalidsecret",
 			expectError: true,
 		},
 		"missing user_id": {
 			claims: jwt.MapClaims{
-				"expiration": now.Add(1 * time.Hour).Unix(),
+				"exp": now.Add(1 * time.Hour).Unix(),
 			},
 			secret:      "testsecret",
 			expectError: true,
 		},
-		"missing expiration": {
+		"missing exp": {
 			claims: jwt.MapClaims{
 				"user_id": "userid",
-			},
-			secret:      "testsecret",
-			expectError: true,
-		},
-		"non-numeric expiration": {
-			claims: jwt.MapClaims{
-				"user_id":    "userid",
-				"expiration": "string",
 			},
 			secret:      "testsecret",
 			expectError: true,
@@ -96,8 +88,9 @@ func TestValidateJWT(t *testing.T) {
 			if tc.expectError {
 				require.Error(t, err)
 			} else {
+				require.NotNil(t, claims, "expected validate to return claims: %v", err)
 				require.Equal(t, tc.claims["user_id"], claims.UserID)
-				require.Equal(t, tc.claims["expiration"], claims.Expiration.Unix())
+				require.Equal(t, tc.claims["exp"], claims.RegisteredClaims.ExpiresAt.Unix())
 			}
 		})
 	}
