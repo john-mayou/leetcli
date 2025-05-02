@@ -1,0 +1,7 @@
+{
+  "number": 4,
+  "title": "List All Usernames From JSON",
+  "difficulty": "easy",
+  "input_file": "testdata/users.json",
+  "expected_file": "testdata/expected.txt"
+}

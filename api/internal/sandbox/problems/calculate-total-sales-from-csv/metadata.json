@@ -1,0 +1,7 @@
+{
+  "number": 3,
+  "title": "Calculate Total Sales From CSV",
+  "difficulty": "easy",
+  "input_file": "testdata/sales.csv",
+  "expected_file": "testdata/expected.txt"
+}

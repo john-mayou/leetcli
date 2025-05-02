@@ -1,0 +1,7 @@
+{
+  "number": 2,
+  "title": "Convert Dates to ISO Format",
+  "difficulty": "easy",
+  "input_file": "testdata/dates.txt",
+  "expected_file": "testdata/expected.txt"
+}

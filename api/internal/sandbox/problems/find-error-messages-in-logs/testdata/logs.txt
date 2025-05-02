@@ -1,0 +1,4 @@
+INFO: Server started
+ERROR: Failed to connect to DB
+INFO: Error occurred, retrying API request
+WARNING: High memory usage
