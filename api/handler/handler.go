@@ -1,0 +1,62 @@
+package handler
+
+import (
+	"errors"
+	"log"
+	"net/http"
+
+	"github.com/john-mayou/leetcli/config"
+	"github.com/john-mayou/leetcli/db"
+)
+
+type Handler struct {
+	Config     *config.Config
+	DBClient   db.DBClient
+	HTTPClient *http.Client
+	Logger     *log.Logger
+}
+
+type HandlerOpts struct {
+	Config     *config.Config
+	DBClient   db.DBClient
+	HTTPClient *http.Client
+	Logger     *log.Logger
+}
+
+func NewHandler(opts *HandlerOpts) (*Handler, error) {
+	if opts.Config == nil {
+		return nil, errors.New("handler: config cannot be nil")
+	}
+	if opts.DBClient == nil {
+		return nil, errors.New("handler: database connection cannot be nil")
+	}
+	if opts.HTTPClient == nil {
+		return nil, errors.New("handler: http client cannot be nil")
+	}
+	if opts.Logger == nil {
+		return nil, errors.New("handler: logger cannot be nil")
+	}
+
+	return &Handler{
+		Config:     opts.Config,
+		DBClient:   opts.DBClient,
+		HTTPClient: opts.HTTPClient,
+		Logger:     opts.Logger,
+	}, nil
+}
+
+func NewTestHandler(opts *HandlerOpts) *Handler {
+	if opts == nil {
+		opts = &HandlerOpts{}
+	}
+	if opts.Logger == nil {
+		opts.Logger = log.Default()
+	}
+
+	return &Handler{
+		Config:     opts.Config,
+		DBClient:   opts.DBClient,
+		HTTPClient: opts.HTTPClient,
+		Logger:     opts.Logger,
+	}
+}
