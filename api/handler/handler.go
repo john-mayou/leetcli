@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/john-mayou/leetcli/config"
 	"github.com/john-mayou/leetcli/db"
@@ -12,6 +13,7 @@ import (
 
 type Handler struct {
 	Config     *config.Config
+	Now        func() time.Time
 	DBClient   db.DBClient
 	HTTPClient *http.Client
 	Metrics    *metric.MetricsHandler
@@ -20,6 +22,7 @@ type Handler struct {
 
 type HandlerOpts struct {
 	Config     *config.Config
+	Now        func() time.Time
 	DBClient   db.DBClient
 	HTTPClient *http.Client
 	Metrics    *metric.MetricsHandler
@@ -29,6 +32,9 @@ type HandlerOpts struct {
 func NewHandler(opts *HandlerOpts) (*Handler, error) {
 	if opts.Config == nil {
 		return nil, errors.New("handler: config cannot be nil")
+	}
+	if opts.Config == nil {
+		return nil, errors.New("handler: now func cannot be nil")
 	}
 	if opts.DBClient == nil {
 		return nil, errors.New("handler: database connection cannot be nil")
@@ -56,6 +62,9 @@ func NewTestHandler(opts *HandlerOpts) *Handler {
 	if opts == nil {
 		opts = &HandlerOpts{}
 	}
+	if opts.Now == nil {
+		opts.Now = time.Now
+	}
 	if opts.Metrics == nil {
 		opts.Metrics = metric.NewTestMetricsHandler()
 	}
@@ -65,6 +74,7 @@ func NewTestHandler(opts *HandlerOpts) *Handler {
 
 	return &Handler{
 		Config:     opts.Config,
+		Now:        opts.Now,
 		DBClient:   opts.DBClient,
 		HTTPClient: opts.HTTPClient,
 		Metrics:    opts.Metrics,
