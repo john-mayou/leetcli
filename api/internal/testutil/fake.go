@@ -2,6 +2,7 @@ package testutil
 
 import (
 	"github.com/google/uuid"
+	"github.com/john-mayou/leetcli/internal/sandbox"
 	"github.com/john-mayou/leetcli/model"
 )
 
@@ -18,6 +19,18 @@ func FakeProblem() *model.Problem {
 	return &model.Problem{
 		ID:   uuid.NewString(),
 		Slug: "testslug_" + uuid.NewString(),
+	}
+}
+
+func FakeProblemMeta() *sandbox.ProblemMeta {
+	return &sandbox.ProblemMeta{
+		Number:     1,
+		Title:      "testtitle_" + uuid.NewString(),
+		Slug:       "testslug_" + uuid.NewString(),
+		Difficulty: "easy",
+		Prompt:     "testprompt_" + uuid.NewString(),
+		Input:      "testinput" + uuid.NewString(),
+		Expected:   "testexpected" + uuid.NewString(),
 	}
 }
 
