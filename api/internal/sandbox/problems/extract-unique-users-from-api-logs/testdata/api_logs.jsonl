@@ -1,5 +1,0 @@
-{ "user_id": 42, "endpoint": "/login", "status": "success" }
-{ "user_id": 17, "endpoint": "/purchase", "status": "error" }
-{ "user_id": 42, "endpoint": "/update", "status": "error" }
-{ "user_id": 17, "endpoint": "/login", "status": "error" }
-{ "user_id": 99, "endpoint": "/logout", "status": "success" }

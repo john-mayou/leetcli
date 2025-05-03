@@ -1,7 +1,6 @@
 package sandbox_test
 
 import (
-	"encoding/json"
 	"flag"
 	"os"
 	"path/filepath"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/john-mayou/leetcli/internal/sandbox"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 )
 
 var update = flag.Bool("UPDATE", false, "update golden files")
@@ -19,7 +19,7 @@ func TestLoadProblemsMeta(t *testing.T) {
 	meta, err := sandbox.LoadProblemsMeta()
 	require.NoError(t, err)
 
-	actual, err := json.MarshalIndent(meta, "", "  ")
+	actual, err := yaml.Marshal(meta)
 	require.NoError(t, err)
 
 	golden := filepath.Join("testdata", "LoadProblemsMeta.txt")

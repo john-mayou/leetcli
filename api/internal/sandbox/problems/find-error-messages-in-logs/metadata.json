@@ -1,7 +1,0 @@
-{
-  "number": 1,
-  "title": "Find Error Messages in Logs",
-  "difficulty": "easy",
-  "input_file": "testdata/logs.txt",
-  "expected_file": "testdata/expected.txt"
-}

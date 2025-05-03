@@ -1,0 +1,41 @@
+title: "Find Error Messages in Logs"
+number: 1
+difficulty: "easy"
+
+prompt: |
+  Given a `logs.txt` file, extract all the lines that contain the word "error" (case-insensitive) using `grep`.
+
+  ### Example `logs.txt`:
+
+  ```
+  INFO: Server started
+  ERROR: Failed to connect to DB
+  INFO: Error occurred, retrying API request
+  WARNING: High memory usage
+  ```
+
+  ### Expected:
+
+  ```
+  ERROR: Failed to connect to DB
+  INFO: Error occured, retrying API request
+  ```
+
+tests:
+  - name: "Single line"
+    setup: |
+      echo "ERROR: Failed to connect to DB" > logs.txt
+    expected: |
+      ERROR: Failed to connect to DB\n
+
+  - name: "Multi line"
+    setup: |
+      cat <<EOF > logs.txt
+      INFO: Server started
+      ERROR: Failed to connect to DB
+      INFO: Error occurred, retrying API request
+      WARNING: High memory usage
+      EOF
+    expected: |
+      ERROR: Failed to connect to DB
+      INFO: Error occured, retrying API request\n

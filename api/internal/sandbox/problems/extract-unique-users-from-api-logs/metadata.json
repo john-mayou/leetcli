@@ -1,7 +1,0 @@
-{
-  "number": 5,
-  "title": "Extract Unique Users From API Logs",
-  "difficulty": "medium",
-  "input_file": "testdata/api_logs.jsonl",
-  "expected_file": "testdata/expected.txt"
-}

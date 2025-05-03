@@ -1,0 +1,44 @@
+title: "Calculate Total Sales from CSV"
+number: 3
+difficulty: "easy"
+
+prompt: |
+  Given a `sales.csv` file where each line represents a sale (`id`, `product`, `amount`), calculate the
+  total amount using `awk`.
+
+  ### Example `sales.csv`:
+
+  ```
+  1,Book,12.99
+  2,Pen,1.50
+  3,Notebook,5.75
+  4,Book,12.99
+  ```
+
+  ### Expected:
+
+  ```
+  Total: 33.23
+  ```
+
+tests:
+  - name: "Single line"
+    setup: |
+      cat <<EOF > sales.csv
+      Item,Quantity,Price
+      1,Book,12.99
+      EOF
+    expected: |
+      Total: 12.99\n
+
+  - name: "Multi line"
+    setup: |
+      cat <<EOF > sales.csv
+      Item,Quantity,Price
+      1,Book,12.99
+      2,Pen,1.50
+      3,Notebook,5.75
+      4,Book,12.99
+      EOF
+    expected: |
+      Total: 33.23\n

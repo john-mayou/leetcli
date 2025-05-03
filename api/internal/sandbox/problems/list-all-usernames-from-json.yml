@@ -1,0 +1,48 @@
+title: "List All Usernames From JSON"
+number: 4
+difficulty: "easy"
+
+prompt: |
+  Given a `users.json` array, extract all usernames using `jq`.
+
+  ### Example `users.json`
+
+  ```
+  [
+    { "id": 1, "username": "alice", "email": "alice@example.com" },
+    { "id": 2, "username": "bob", "email": "bob@example.com" },
+    { "id": 3, "username": "charlie", "email": "charlie@example.com" }
+  ]
+  ```
+
+  ### Expected:
+
+  ```
+  alice
+  bob
+  charlie
+  ```
+
+tests:
+  - name: "Single line"
+    setup: |
+      cat <<EOF > users.json
+      [
+        { "id": 1, "username": "alice", "email": "alice@example.com" },
+      ]
+    expected: |
+      alice\n
+
+  - name: "Multi line"
+    setup: |
+      cat <<EOF > users.json
+      [
+        { "id": 1, "username": "alice", "email": "alice@example.com" },
+        { "id": 2, "username": "bob", "email": "bob@example.com" },
+        { "id": 3, "username": "charlie", "email": "charlie@example.com" }
+      ]
+      EOF
+    expected: |
+      alice
+      bob
+      charlie\n
