@@ -34,11 +34,13 @@ func FakeProblemMeta() *sandbox.ProblemMeta {
 	return &sandbox.ProblemMeta{
 		Number:     1,
 		Title:      "testtitle_" + counterStr(),
-		Slug:       "testslug_" + counterStr(),
 		Difficulty: "easy",
 		Prompt:     "testprompt_" + counterStr(),
-		Input:      "testinput_" + counterStr(),
-		Expected:   "testexpected_" + counterStr(),
+		Tests: []sandbox.TestCase{{
+			Name:     "testname_" + counterStr(),
+			Setup:    "testsetup_" + counterStr(),
+			Expected: "testexpected_" + counterStr(),
+		}},
 	}
 }
 

@@ -10,13 +10,17 @@
   },
   "problems_meta": {
     "slug": {
-      "difficulty": "easy",
-      "expected": "testexpected_7",
-      "input": "testinput_6",
-      "number": 1,
-      "prompt": "testprompt_5",
-      "slug": "testslug_4",
-      "title": "testtitle_3"
+      "Difficulty": "easy",
+      "Number": 1,
+      "Prompt": "testprompt_4",
+      "Tests": [
+        {
+          "Expected": "testexpected_7",
+          "Name": "testname_5",
+          "Setup": "testsetup_6"
+        }
+      ],
+      "Title": "testtitle_3"
     }
   }
 }
