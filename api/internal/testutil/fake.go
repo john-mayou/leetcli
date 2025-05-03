@@ -1,47 +1,64 @@
 package testutil
 
 import (
+	"strconv"
+
 	"github.com/google/uuid"
 	"github.com/john-mayou/leetcli/internal/sandbox"
 	"github.com/john-mayou/leetcli/model"
 )
 
+var counter int
+
+func ResetFakeCounter() {
+	counter = 0
+}
+
 func FakeUser() *model.User {
 	return &model.User{
-		ID:       uuid.NewString(),
-		GithubID: "github_" + uuid.NewString(),
-		Username: "testuser_" + uuid.NewString(),
-		Email:    "test_" + uuid.NewString() + "@example.com",
+		ID:       counterUUID(),
+		GithubID: "github_" + counterStr(),
+		Username: "testuser_" + counterStr(),
+		Email:    "test_" + counterStr() + "@example.com",
 	}
 }
 
 func FakeProblem() *model.Problem {
 	return &model.Problem{
-		ID:   uuid.NewString(),
-		Slug: "testslug_" + uuid.NewString(),
+		ID:   counterUUID(),
+		Slug: "testslug_" + counterStr(),
 	}
 }
 
 func FakeProblemMeta() *sandbox.ProblemMeta {
 	return &sandbox.ProblemMeta{
 		Number:     1,
-		Title:      "testtitle_" + uuid.NewString(),
-		Slug:       "testslug_" + uuid.NewString(),
+		Title:      "testtitle_" + counterStr(),
+		Slug:       "testslug_" + counterStr(),
 		Difficulty: "easy",
-		Prompt:     "testprompt_" + uuid.NewString(),
-		Input:      "testinput" + uuid.NewString(),
-		Expected:   "testexpected" + uuid.NewString(),
+		Prompt:     "testprompt_" + counterStr(),
+		Input:      "testinput_" + counterStr(),
+		Expected:   "testexpected_" + counterStr(),
 	}
 }
 
 func FakeProblemSubmission(problemID, userID string) *model.ProblemSubmission {
 	return &model.ProblemSubmission{
-		ID:         uuid.NewString(),
+		ID:         counterUUID(),
 		ProblemID:  problemID,
 		UserID:     userID,
 		Status:     model.ProblemSubmissionStutusPending,
-		Code:       "testcode_" + uuid.NewString(),
-		Output:     "testoutput_" + uuid.NewString(),
+		Code:       "testcode_" + counterStr(),
+		Output:     "testoutput_" + strconv.Itoa(counter),
 		ExecTimeMs: 1,
 	}
+}
+
+func counterStr() string {
+	counter++
+	return strconv.Itoa(counter)
+}
+
+func counterUUID() string {
+	return uuid.NewMD5(uuid.NameSpaceOID, []byte("id-"+counterStr())).String()
 }
