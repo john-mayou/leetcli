@@ -9,7 +9,7 @@ import (
 )
 
 func TestRunner(t *testing.T) {
-	stdout, stderr, err := sandbox.Runner(t, "echo hello")
+	stdout, stderr, err := sandbox.Runner("echo hello")
 	assert.NoError(t, err)
 	assert.Equal(t, "", stderr)
 	assert.Equal(t, "hello", strings.TrimSpace(stdout))

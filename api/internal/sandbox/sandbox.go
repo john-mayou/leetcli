@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"context"
 	"os/exec"
-	"testing"
 	"time"
 )
 
-func Runner(t *testing.T, script string) (string, string, error) {
+func Runner(script string) (string, string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
