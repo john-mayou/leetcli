@@ -19,6 +19,7 @@ var update = flag.Bool("UPDATE", false, "update golden files")
 
 func TestGetProblems(t *testing.T) {
 	flag.Parse()
+	testutil.ResetFakeCounter()
 
 	h := handler.NewTestHandler(&handler.HandlerOpts{Store: &handler.Store{
 		Problems:     map[string]*model.Problem{"slug": testutil.FakeProblem()},

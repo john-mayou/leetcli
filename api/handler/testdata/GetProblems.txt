@@ -3,20 +3,20 @@
     "slug": {
       "created_at": "0001-01-01T00:00:00Z",
       "deleted_at": null,
-      "id": "fc29b2b6-8d4b-4d78-a0c1-c079940d05d2",
-      "slug": "testslug_f25b6e86-6adf-4d5e-815c-9a1309f998b6",
+      "id": "ba7491cd-6fac-3201-9c6f-256ef6c65174",
+      "slug": "testslug_2",
       "updated_at": "0001-01-01T00:00:00Z"
     }
   },
   "problems_meta": {
     "slug": {
       "difficulty": "easy",
-      "expected": "testexpectedba304eac-d84c-4557-b6aa-ae2dae6521b6",
-      "input": "testinput334b2a13-8a12-45ea-9ed1-3ce3cdf8a3ac",
+      "expected": "testexpected_7",
+      "input": "testinput_6",
       "number": 1,
-      "prompt": "testprompt_80053313-26eb-489e-8e02-6fb02967bbe8",
-      "slug": "testslug_5fe96cdb-59ee-452d-af21-f2dc6400dcad",
-      "title": "testtitle_34ede101-8732-4baa-9284-d7361ebac830"
+      "prompt": "testprompt_5",
+      "slug": "testslug_4",
+      "title": "testtitle_3"
     }
   }
 }
