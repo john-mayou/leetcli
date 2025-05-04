@@ -20,6 +20,5 @@ type ProblemSubmission struct {
 	UserID     string                  `db:"user_id" json:"user_id"`
 	Status     ProblemSubmissionStatus `db:"status" json:"status"`
 	Code       string                  `db:"code" json:"code"`
-	Output     string                  `db:"output" json:"output"`
 	ExecTimeMs int                     `db:"exec_time_ms" json:"exec_time_ms"`
 }

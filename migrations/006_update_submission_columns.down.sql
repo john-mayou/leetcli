@@ -1,0 +1,1 @@
+ALTER TABLE problem_submissions ADD COLUMN IF NOT EXISTS output TEXT NOT NULL DEFAULT '';

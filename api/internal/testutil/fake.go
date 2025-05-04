@@ -51,7 +51,6 @@ func FakeProblemSubmission(problemID, userID string) *model.ProblemSubmission {
 		UserID:     userID,
 		Status:     model.ProblemSubmissionStutusPending,
 		Code:       "testcode_" + counterStr(),
-		Output:     "testoutput_" + strconv.Itoa(counter),
 		ExecTimeMs: 1,
 	}
 }
