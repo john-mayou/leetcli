@@ -54,7 +54,7 @@ func TestSandbox(t *testing.T) {
 	t.Run("error timeout", func(t *testing.T) {
 		meta := getMeta("calculate-total-sales-from-csv")
 
-		result := sandbox.Sandbox(meta, "sleep 0.03", &sandbox.SandboxOpts{Timeout: time.Millisecond})
+		result := sandbox.Sandbox(meta, "sleep 0.5", &sandbox.SandboxOpts{Timeout: 50 * time.Millisecond})
 
 		assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "error-timeout.txt"))
 	})
