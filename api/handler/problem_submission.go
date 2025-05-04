@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/john-mayou/leetcli/internal/sandbox"
 	"github.com/john-mayou/leetcli/model"
 )
@@ -56,13 +57,18 @@ func (h *Handler) SubmitProblem(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		h.DBClient.CreateProblemSubmission(&model.ProblemSubmission{
+		_, err = h.DBClient.CreateProblemSubmission(&model.ProblemSubmission{
+			ID:         uuid.NewString(),
 			ProblemID:  problem.ID,
 			UserID:     userID,
 			Status:     status,
 			Code:       body.Code,
 			ExecTimeMs: result.ExecTimeMs,
 		})
+		if err != nil {
+			http.Error(w, fmt.Errorf("error creating problem submission: %w", err).Error(), http.StatusInternalServerError)
+			return
+		}
 	default:
 		http.Error(w, fmt.Sprintf("invalid type parameter: %q", body.Type), http.StatusBadRequest)
 		return

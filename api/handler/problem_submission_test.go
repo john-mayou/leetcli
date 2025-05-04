@@ -42,11 +42,11 @@ func TestSubmitProblem(t *testing.T) {
 
 	for tcName, tc := range runCases {
 		t.Run(tcName, func(*testing.T) {
-			req := buildSubmitProblemBody(t, &handler.SubmitProblemBody{Slug: "hello-world", Type: "run", Code: tc.Code})
+			h := buildSubmitProblemHandler(t)
 			r := httptest.NewRecorder()
+			req := buildSubmitProblemReq(t, h, &handler.SubmitProblemBody{Slug: "hello-world", Type: "run", Code: tc.Code})
 
-			handler := buildSubmitProblemHandler(t)
-			handler.SubmitProblem(r, req)
+			h.SubmitProblem(r, req)
 
 			assertGoldenResult(t, r, filepath.Join("testdata", "SubmitProblem", tc.Golden))
 		})
@@ -76,17 +76,17 @@ func TestSubmitProblem(t *testing.T) {
 
 	for tcName, tc := range submitCases {
 		t.Run(tcName, func(*testing.T) {
-			req := buildSubmitProblemBody(t, &handler.SubmitProblemBody{Slug: "hello-world", Type: "submit", Code: tc.Code})
+			h := buildSubmitProblemHandler(t)
 			r := httptest.NewRecorder()
+			req := buildSubmitProblemReq(t, h, &handler.SubmitProblemBody{Slug: "hello-world", Type: "submit", Code: tc.Code})
 
-			handler := buildSubmitProblemHandler(t)
-			handler.SubmitProblem(r, req)
+			h.SubmitProblem(r, req)
 
 			// assert golden
 			assertGoldenResult(t, r, filepath.Join("testdata", "SubmitProblem", tc.Golden))
 
 			// assert submission
-			subs, err := handler.DBClient.ListProblemSubmissions()
+			subs, err := h.DBClient.ListProblemSubmissions()
 			require.NoError(t, err)
 			require.Len(t, subs, 1)
 			assert.Equal(t, tc.ExpectedStatus, subs[0].Status)
@@ -97,8 +97,11 @@ func TestSubmitProblem(t *testing.T) {
 }
 
 func buildSubmitProblemHandler(t *testing.T) *handler.Handler {
+	t.Helper()
+
 	dbClient := testutil.SetupTestClient(t)
 
+	// create problem
 	problem := testutil.FakeProblem()
 	problem.Slug = "hello-world"
 	problem, err := dbClient.CreateProblem(problem)
@@ -120,7 +123,7 @@ func buildSubmitProblemHandler(t *testing.T) *handler.Handler {
 					Tests: []sandbox.ProblemMetaTest{{
 						Name:     "Test 1",
 						Setup:    "",
-						Expected: "Hello world",
+						Expected: "Hello world\n",
 					}},
 				},
 			},
@@ -128,18 +131,31 @@ func buildSubmitProblemHandler(t *testing.T) *handler.Handler {
 	})
 }
 
-func buildSubmitProblemBody(t *testing.T, body *handler.SubmitProblemBody) *http.Request {
+func buildSubmitProblemReq(t *testing.T, h *handler.Handler, body *handler.SubmitProblemBody) *http.Request {
+	t.Helper()
+
+	// marshal body
 	jsonBytes, err := json.Marshal(body)
 	require.NoError(t, err)
 
+	// build request
 	req := httptest.NewRequest("POST", "/submit", bytes.NewReader(jsonBytes))
 	req.Header.Set("Content-Type", "application/json")
 
-	return req
+	// create user
+	user, err := h.DBClient.CreateUser(testutil.FakeUser())
+	require.NoError(t, err)
+
+	// add user auth
+	ctx := handler.CtxWithUserID(req.Context(), user.ID)
+	return req.WithContext(ctx)
 }
 
 func assertGoldenResult(t *testing.T, r *httptest.ResponseRecorder, filepath string) {
 	t.Helper()
+
+	// assert req status
+	require.Equal(t, http.StatusOK, r.Code, "response body: %s", r.Body.String())
 
 	// unmarshal
 	var result sandbox.SandboxResult
@@ -155,7 +171,7 @@ func assertGoldenResult(t *testing.T, r *httptest.ResponseRecorder, filepath str
 		require.NoError(t, os.WriteFile(filepath, actual, 0644))
 	}
 
-	// assert
+	// assert body
 	expected, err := os.ReadFile(filepath)
 	require.NoError(t, err)
 	require.Equal(t, string(actual), string(expected))

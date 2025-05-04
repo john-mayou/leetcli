@@ -1,0 +1,17 @@
+{
+  "Status": "error",
+  "ExecTimeMs": 0,
+  "TestResults": [
+    {
+      "Test": {
+        "name": "Test 1",
+        "setup": "",
+        "expected": "Hello world\n"
+      },
+      "ErrReason": "runtime-error",
+      "ExitCode": 2,
+      "Stdout": "",
+      "Stderr": "/bin/bash: -c: line 1: syntax error near unexpected token `\u0026'\n/bin/bash: -c: line 1: `!\u0026echo 'Hello world''\n"
+    }
+  ]
+}

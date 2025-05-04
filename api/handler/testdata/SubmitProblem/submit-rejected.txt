@@ -1,0 +1,17 @@
+{
+  "Status": "rejected",
+  "ExecTimeMs": 0,
+  "TestResults": [
+    {
+      "Test": {
+        "name": "Test 1",
+        "setup": "",
+        "expected": "Hello world\n"
+      },
+      "ErrReason": "mismatch",
+      "ExitCode": 0,
+      "Stdout": "Hello\n",
+      "Stderr": ""
+    }
+  ]
+}
