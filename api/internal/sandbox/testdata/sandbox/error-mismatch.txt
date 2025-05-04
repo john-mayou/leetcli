@@ -1,4 +1,5 @@
-success: false
+status: rejected
+exectimems: 1
 testresults:
 - test:
     name: Single line

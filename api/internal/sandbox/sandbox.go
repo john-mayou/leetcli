@@ -3,6 +3,7 @@ package sandbox
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os/exec"
 	"time"
 )
@@ -15,14 +16,23 @@ const (
 	ErrReasonRuntimeError = "runtime-error"
 )
 
+type SandboxResultStatus string
+
+const (
+	SandboxStatusAccepted SandboxResultStatus = "accepted"
+	SandboxStatusRejected SandboxResultStatus = "rejected"
+	SandboxStatusError    SandboxResultStatus = "error"
+)
+
 type SandboxResult struct {
-	Success     bool
+	Status      SandboxResultStatus
+	ExecTimeMs  int
 	TestResults []SandboxTestResult
 }
 
 type SandboxTestResult struct {
 	Test      ProblemMetaTest
-	ErrReason string
+	ErrReason ErrReason
 	ExitCode  int
 	Stdout    string
 	Stderr    string
@@ -30,14 +40,17 @@ type SandboxTestResult struct {
 
 type SandboxOpts struct {
 	Timeout time.Duration
+	Timer   Timer
 }
 
 func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult {
 	ctx, cancel := context.WithTimeout(context.Background(), opts.Timeout)
 	defer cancel()
 
-	success := true
+	status := SandboxStatusAccepted
 	results := make([]SandboxTestResult, len(meta.Tests))
+
+	opts.Timer.Start()
 	for i := range meta.Tests {
 		test := meta.Tests[i]
 
@@ -71,17 +84,16 @@ func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult
 			exitCode = 0
 		}
 
-		errReason := ""
+		var errReason ErrReason
 		if ctx.Err() == context.DeadlineExceeded {
 			errReason = ErrReasonTimeout
+			status = setStatus(status, SandboxStatusError)
 		} else if err != nil {
 			errReason = ErrReasonRuntimeError
+			status = setStatus(status, SandboxStatusError)
 		} else if test.Expected != stdout {
 			errReason = ErrReasonMismatch
-		}
-
-		if exitCode != 0 || errReason != "" {
-			success = false
+			status = setStatus(status, SandboxStatusRejected)
 		}
 
 		results[i] = SandboxTestResult{
@@ -94,7 +106,25 @@ func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult
 	}
 
 	return &SandboxResult{
-		Success:     success,
+		Status:      status,
+		ExecTimeMs:  opts.Timer.ElapsedMs(),
 		TestResults: results,
+	}
+}
+
+func setStatus(current, next SandboxResultStatus) SandboxResultStatus {
+	switch current {
+	case SandboxStatusAccepted:
+		return next // always promote
+	case SandboxStatusRejected:
+		if next == SandboxStatusError {
+			return next // only promote to error
+		} else {
+			return current
+		}
+	case SandboxStatusError:
+		return SandboxStatusError // already worst, don't backtrack
+	default:
+		panic(fmt.Sprintf("unexpected SandboxResultStatus: %s", current))
 	}
 }

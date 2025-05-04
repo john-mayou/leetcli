@@ -1,4 +1,5 @@
-success: true
+status: accepted
+exectimems: 1
 testresults:
 - test:
     name: Single line
