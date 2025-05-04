@@ -15,8 +15,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var update = flag.Bool("UPDATE", false, "update golden files")
-
 func TestGetProblems(t *testing.T) {
 	flag.Parse()
 	testutil.ResetFakeCounter()
@@ -40,11 +38,11 @@ func TestGetProblems(t *testing.T) {
 	require.NoError(t, err)
 
 	golden := "testdata/GetProblems.txt"
-	if *update {
+	if *testutil.Update {
 		os.WriteFile(golden, actual, 0644)
 	}
 
 	expected, err := os.ReadFile(golden)
 	require.NoError(t, err)
-	require.Equal(t, actual, expected)
+	require.Equal(t, string(actual), string(expected))
 }

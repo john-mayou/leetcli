@@ -1,5 +1,3 @@
-x-env: ENV=test
-
 services:
   db:
     image: postgres:17

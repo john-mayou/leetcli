@@ -10,6 +10,8 @@ import (
 	"github.com/john-mayou/leetcli/handler"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 	"github.com/stretchr/testify/require"
+
+	_ "github.com/john-mayou/leetcli/internal/testutil"
 )
 
 func TestTrackMetric(t *testing.T) {

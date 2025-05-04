@@ -55,11 +55,13 @@ dev-api-down:
 
 # ----- Testing -----
 
+TEST_API = $(COMPOSE_TEST) --profile api up --build --abort-on-container-exit --exit-code-from api
+
 test-api: check-docker check-compose
-	set -exuo pipefail; \
-	$(COMPOSE_TEST) --profile api up -d --build; \
-	trap "$(COMPOSE_TEST) --profile api down" EXIT; \
-	$(COMPOSE_TEST) exec api sh -c "cd api && go test ./... -v"
+	$(TEST_API)
+
+test-api-update: check-docker check-compose
+	UPDATE=true $(TEST_API)
 
 # ----- Linting -----
 

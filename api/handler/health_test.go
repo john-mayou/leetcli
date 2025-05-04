@@ -7,6 +7,8 @@ import (
 
 	"github.com/john-mayou/leetcli/handler"
 	"github.com/stretchr/testify/require"
+
+	_ "github.com/john-mayou/leetcli/internal/testutil"
 )
 
 func TestHealthHandler(t *testing.T) {

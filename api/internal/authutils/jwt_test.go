@@ -8,6 +8,8 @@ import (
 	"github.com/john-mayou/leetcli/config"
 	"github.com/john-mayou/leetcli/internal/authutils"
 	"github.com/stretchr/testify/require"
+
+	_ "github.com/john-mayou/leetcli/internal/testutil"
 )
 
 func TestGenerateJWT(t *testing.T) {

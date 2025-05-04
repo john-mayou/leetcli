@@ -13,6 +13,8 @@ import (
 	"github.com/john-mayou/leetcli/handler"
 	"github.com/john-mayou/leetcli/internal/authutils"
 	"github.com/stretchr/testify/require"
+
+	_ "github.com/john-mayou/leetcli/internal/testutil"
 )
 
 func TestLoggingMiddleare(t *testing.T) {

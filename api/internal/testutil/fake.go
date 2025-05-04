@@ -36,7 +36,7 @@ func FakeProblemMeta() *sandbox.ProblemMeta {
 		Title:      "testtitle_" + counterStr(),
 		Difficulty: "easy",
 		Prompt:     "testprompt_" + counterStr(),
-		Tests: []sandbox.TestCase{{
+		Tests: []sandbox.ProblemMetaTest{{
 			Name:     "testname_" + counterStr(),
 			Setup:    "testsetup_" + counterStr(),
 			Expected: "testexpected_" + counterStr(),
