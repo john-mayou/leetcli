@@ -86,7 +86,7 @@ func TestAuthMiddleare(t *testing.T) {
 			require.Equal(t, tc.expectedCode, r.Code)
 			userID := ""
 			if handlerCtx != nil {
-				userID, _ = handlerCtx.Value(handler.UserIDKey()).(string)
+				userID, _ = handler.CtxUserID(handlerCtx)
 			}
 			require.Equal(t, tc.expectedUserID, userID)
 		})

@@ -18,7 +18,7 @@ func TestGetCurrentUser(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("user found", func(t *testing.T) {
-		ctx := context.WithValue(context.Background(), handler.UserIDKey(), user.ID)
+		ctx := handler.CtxWithUserID(context.Background(), user.ID)
 		req := httptest.NewRequestWithContext(ctx, "GET", "/users/me", nil)
 		r := httptest.NewRecorder()
 
@@ -28,7 +28,7 @@ func TestGetCurrentUser(t *testing.T) {
 		require.Contains(t, r.Body.String(), `"id":"`+user.ID+`"`)
 	})
 	t.Run("user not found", func(t *testing.T) {
-		ctx := context.WithValue(context.Background(), handler.UserIDKey(), "randomid")
+		ctx := handler.CtxWithUserID(context.Background(), "randomid")
 		req := httptest.NewRequestWithContext(ctx, "GET", "/users/me", nil)
 		r := httptest.NewRecorder()
 

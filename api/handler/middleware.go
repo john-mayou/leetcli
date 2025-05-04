@@ -1,21 +1,12 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/john-mayou/leetcli/internal/authutils"
 )
-
-type contextKey string
-
-const userIDKey contextKey = "userID"
-
-func UserIDKey() contextKey {
-	return userIDKey
-}
 
 func (h *Handler) LoggingMiddlware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +34,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
+		ctx := CtxWithUserID(r.Context(), claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
