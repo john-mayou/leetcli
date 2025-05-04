@@ -5,6 +5,7 @@ import (
 
 	"github.com/john-mayou/leetcli/internal/testutil"
 	"github.com/john-mayou/leetcli/model"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -37,9 +38,26 @@ func TestProblemCRUD(t *testing.T) {
 	require.False(t, deletedProblem.DeletedAt.IsZero())
 }
 
-func assertProblemEqual(t *testing.T, want, got *model.Problem) {
+func TestListProblems(t *testing.T) {
+	client := testutil.SetupTestClient(t)
+
+	problemA, err := client.CreateProblem(testutil.FakeProblem())
+	require.NoError(t, err)
+	problemB, err := client.CreateProblem(testutil.FakeProblem())
+	require.NoError(t, err)
+
+	problems, err := client.ListProblems()
+	require.NoError(t, err)
+	require.Len(t, problems, 2)
+
+	ids := []string{problems[0].ID, problems[1].ID}
+	require.Contains(t, ids, problemA.ID)
+	require.Contains(t, ids, problemB.ID)
+}
+
+func assertProblemEqual(t *testing.T, expected, actual *model.Problem) {
 	t.Helper()
 
-	require.Equal(t, want.ID, got.ID)
-	require.Equal(t, want.Slug, got.Slug)
+	assert.Equal(t, expected.ID, actual.ID)
+	assert.Equal(t, expected.Slug, actual.Slug)
 }
