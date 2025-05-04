@@ -5,6 +5,7 @@ import (
 
 	"github.com/john-mayou/leetcli/internal/testutil"
 	"github.com/john-mayou/leetcli/model"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -37,11 +38,27 @@ func TestUserCRUD(t *testing.T) {
 	require.False(t, deletedUser.DeletedAt.IsZero())
 }
 
-func assertUserEqual(t *testing.T, want, got *model.User) {
+func TestFindUserByGithubID(t *testing.T) {
+	client := testutil.SetupTestClient(t)
+
+	user := testutil.FakeUser()
+	user.GithubID = "123"
+
+	// create
+	user, err := client.CreateUser(user)
+	require.NoError(t, err)
+
+	// find
+	foundUser, err := client.FindUserByGithubID("123")
+	require.NoError(t, err)
+	assertUserEqual(t, user, foundUser)
+}
+
+func assertUserEqual(t *testing.T, expected, actual *model.User) {
 	t.Helper()
 
-	require.Equal(t, want.ID, got.ID)
-	require.Equal(t, want.GithubID, got.GithubID)
-	require.Equal(t, want.Username, got.Username)
-	require.Equal(t, want.Email, got.Email)
+	assert.Equal(t, expected.ID, actual.ID)
+	assert.Equal(t, expected.GithubID, actual.GithubID)
+	assert.Equal(t, expected.Username, actual.Username)
+	assert.Equal(t, expected.Email, actual.Email)
 }
