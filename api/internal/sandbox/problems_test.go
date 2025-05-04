@@ -23,7 +23,7 @@ func TestLoadProblemsMeta(t *testing.T) {
 
 	golden := filepath.Join("testdata", "LoadProblemsMeta.txt")
 	if *testutil.Update {
-		os.WriteFile(golden, actual, 0644)
+		require.NoError(t, os.WriteFile(golden, actual, 0644))
 	}
 
 	expected, err := os.ReadFile(golden)
