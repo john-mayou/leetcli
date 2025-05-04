@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -62,7 +64,7 @@ func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult
 		}
 
 		cmd := exec.CommandContext(ctx,
-			"nsjail", "--really_quiet", "--config", "sandbox.cfg",
+			"nsjail", "--really_quiet", "--config", nsjailCfgPath(),
 			"--", "/bin/bash", "-c", fullScript,
 		)
 
@@ -110,6 +112,14 @@ func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult
 		ExecTimeMs:  opts.Timer.ElapsedMs(),
 		TestResults: results,
 	}
+}
+
+func nsjailCfgPath() string {
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		panic("could not get nsjail config dir")
+	}
+	return filepath.Join(filepath.Dir(filename), "sandbox.cfg")
 }
 
 func setStatus(current, next SandboxResultStatus) SandboxResultStatus {
