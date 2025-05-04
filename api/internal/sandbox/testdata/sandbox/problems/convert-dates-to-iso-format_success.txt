@@ -1,0 +1,32 @@
+success: true
+testresults:
+- test:
+    name: Single line
+    setup: |
+      echo "04/26/2025" > dates.txt
+    expected: |
+      2025-04-26
+  errreason: ""
+  exitcode: 0
+  stdout: |
+    2025-04-26
+  stderr: ""
+- test:
+    name: Multi line
+    setup: |
+      cat <<SETUP > dates.txt
+      04/26/2025
+      12/05/2024
+      01/01/2023
+      SETUP
+    expected: |
+      2025-04-26
+      2024-12-05
+      2023-01-01
+  errreason: ""
+  exitcode: 0
+  stdout: |
+    2025-04-26
+    2024-12-05
+    2023-01-01
+  stderr: ""

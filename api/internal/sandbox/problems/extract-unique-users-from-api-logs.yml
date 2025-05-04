@@ -28,17 +28,17 @@ tests:
     setup: |
       echo '{ "user_id": 17, "endpoint": "/purchase", "status": "error" }' >> api_logs.jsonl
     expected: |
-      17\n
+      17
 
   - name: "Multi line"
     setup: |
-      cat <<EOF > api_logs.jsonl
+      cat <<SETUP > api_logs.jsonl
       { "user_id": 42, "endpoint": "/login", "status": "success" }
       { "user_id": 17, "endpoint": "/purchase", "status": "error" }
       { "user_id": 42, "endpoint": "/update", "status": "error" }
       { "user_id": 17, "endpoint": "/login", "status": "error" }
       { "user_id": 99, "endpoint": "/logout", "status": "success" }
-      EOF
+      SETUP
     expected: |
       17
-      42\n
+      42

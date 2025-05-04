@@ -26,16 +26,16 @@ tests:
     setup: |
       echo "ERROR: Failed to connect to DB" > logs.txt
     expected: |
-      ERROR: Failed to connect to DB\n
+      ERROR: Failed to connect to DB
 
   - name: "Multi line"
     setup: |
-      cat <<EOF > logs.txt
+      cat <<SETUP > logs.txt
       INFO: Server started
       ERROR: Failed to connect to DB
       INFO: Error occurred, retrying API request
       WARNING: High memory usage
-      EOF
+      SETUP
     expected: |
       ERROR: Failed to connect to DB
-      INFO: Error occured, retrying API request\n
+      INFO: Error occurred, retrying API request

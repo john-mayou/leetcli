@@ -1,0 +1,31 @@
+success: true
+testresults:
+- test:
+    name: Single line
+    setup: |
+      echo "ERROR: Failed to connect to DB" > logs.txt
+    expected: |
+      ERROR: Failed to connect to DB
+  errreason: ""
+  exitcode: 0
+  stdout: |
+    ERROR: Failed to connect to DB
+  stderr: ""
+- test:
+    name: Multi line
+    setup: |
+      cat <<SETUP > logs.txt
+      INFO: Server started
+      ERROR: Failed to connect to DB
+      INFO: Error occurred, retrying API request
+      WARNING: High memory usage
+      SETUP
+    expected: |
+      ERROR: Failed to connect to DB
+      INFO: Error occurred, retrying API request
+  errreason: ""
+  exitcode: 0
+  stdout: |
+    ERROR: Failed to connect to DB
+    INFO: Error occurred, retrying API request
+  stderr: ""

@@ -7,11 +7,10 @@ import (
 	"testing"
 
 	"github.com/john-mayou/leetcli/internal/sandbox"
+	"github.com/john-mayou/leetcli/internal/testutil"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 )
-
-var update = flag.Bool("UPDATE", false, "update golden files")
 
 func TestLoadProblemsMeta(t *testing.T) {
 	flag.Parse()
@@ -23,11 +22,11 @@ func TestLoadProblemsMeta(t *testing.T) {
 	require.NoError(t, err)
 
 	golden := filepath.Join("testdata", "LoadProblemsMeta.txt")
-	if *update {
+	if *testutil.Update {
 		os.WriteFile(golden, actual, 0644)
 	}
 
 	expected, err := os.ReadFile(golden)
 	require.NoError(t, err)
-	require.Equal(t, actual, expected)
+	require.Equal(t, string(actual), string(expected))
 }

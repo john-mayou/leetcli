@@ -23,23 +23,23 @@ calculate-total-sales-from-csv:
   tests:
   - name: Single line
     setup: |
-      cat <<EOF > sales.csv
+      cat <<SETUP > sales.csv
       Item,Quantity,Price
       1,Book,12.99
-      EOF
+      SETUP
     expected: |
-      Total: 12.99\n
+      Total: 12.99
   - name: Multi line
     setup: |
-      cat <<EOF > sales.csv
+      cat <<SETUP > sales.csv
       Item,Quantity,Price
       1,Book,12.99
       2,Pen,1.50
       3,Notebook,5.75
       4,Book,12.99
-      EOF
+      SETUP
     expected: |
-      Total: 33.23\n
+      Total: 33.23
 convert-dates-to-iso-format:
   title: Convert Dates to ISO Format
   number: 2
@@ -67,18 +67,18 @@ convert-dates-to-iso-format:
     setup: |
       echo "04/26/2025" > dates.txt
     expected: |
-      2025-04-26\n
+      2025-04-26
   - name: Multi line
     setup: |
-      cat <<EOF > dates.txt
+      cat <<SETUP > dates.txt
       04/26/2025
       12/05/2024
       01/01/2023
-      EOF
+      SETUP
     expected: |
       2025-04-26
       2024-12-05
-      2023-01-01\n
+      2023-01-01
 extract-unique-users-from-api-logs:
   title: Extract Unique Users From API Logs
   number: 5
@@ -108,19 +108,19 @@ extract-unique-users-from-api-logs:
     setup: |
       echo '{ "user_id": 17, "endpoint": "/purchase", "status": "error" }' >> api_logs.jsonl
     expected: |
-      17\n
+      17
   - name: Multi line
     setup: |
-      cat <<EOF > api_logs.jsonl
+      cat <<SETUP > api_logs.jsonl
       { "user_id": 42, "endpoint": "/login", "status": "success" }
       { "user_id": 17, "endpoint": "/purchase", "status": "error" }
       { "user_id": 42, "endpoint": "/update", "status": "error" }
       { "user_id": 17, "endpoint": "/login", "status": "error" }
       { "user_id": 99, "endpoint": "/logout", "status": "success" }
-      EOF
+      SETUP
     expected: |
       17
-      42\n
+      42
 find-error-messages-in-logs:
   title: Find Error Messages in Logs
   number: 1
@@ -148,18 +148,18 @@ find-error-messages-in-logs:
     setup: |
       echo "ERROR: Failed to connect to DB" > logs.txt
     expected: |
-      ERROR: Failed to connect to DB\n
+      ERROR: Failed to connect to DB
   - name: Multi line
     setup: |
-      cat <<EOF > logs.txt
+      cat <<SETUP > logs.txt
       INFO: Server started
       ERROR: Failed to connect to DB
       INFO: Error occurred, retrying API request
       WARNING: High memory usage
-      EOF
+      SETUP
     expected: |
       ERROR: Failed to connect to DB
-      INFO: Error occured, retrying API request\n
+      INFO: Error occurred, retrying API request
 list-all-usernames-from-json:
   title: List All Usernames From JSON
   number: 4
@@ -187,22 +187,23 @@ list-all-usernames-from-json:
   tests:
   - name: Single line
     setup: |
-      cat <<EOF > users.json
+      cat <<SETUP > users.json
       [
-        { "id": 1, "username": "alice", "email": "alice@example.com" },
+        { "id": 1, "username": "alice", "email": "alice@example.com" }
       ]
+      SETUP
     expected: |
-      alice\n
+      alice
   - name: Multi line
     setup: |
-      cat <<EOF > users.json
+      cat <<SETUP > users.json
       [
         { "id": 1, "username": "alice", "email": "alice@example.com" },
         { "id": 2, "username": "bob", "email": "bob@example.com" },
         { "id": 3, "username": "charlie", "email": "charlie@example.com" }
       ]
-      EOF
+      SETUP
     expected: |
       alice
       bob
-      charlie\n
+      charlie

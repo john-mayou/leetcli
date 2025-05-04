@@ -26,16 +26,16 @@ tests:
     setup: |
       echo "04/26/2025" > dates.txt
     expected: |
-      2025-04-26\n
+      2025-04-26
 
   - name: "Multi line"
     setup: |
-      cat <<EOF > dates.txt
+      cat <<SETUP > dates.txt
       04/26/2025
       12/05/2024
       01/01/2023
-      EOF
+      SETUP
     expected: |
       2025-04-26
       2024-12-05
-      2023-01-01\n
+      2023-01-01

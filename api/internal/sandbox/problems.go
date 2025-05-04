@@ -12,17 +12,17 @@ import (
 )
 
 type ProblemMeta struct {
-	Title      string     `yaml:"title"`
-	Number     int        `yaml:"number"`
-	Difficulty string     `yaml:"difficulty"`
-	Prompt     string     `yaml:"prompt"`
-	Tests      []TestCase `yaml:"tests"`
+	Title      string            `json:"title" yaml:"title"`
+	Number     int               `json:"number" yaml:"number"`
+	Difficulty string            `json:"difficulty" yaml:"difficulty"`
+	Prompt     string            `json:"prompt" yaml:"prompt"`
+	Tests      []ProblemMetaTest `json:"tests" yaml:"tests"`
 }
 
-type TestCase struct {
-	Name     string `yaml:"name"`
-	Setup    string `yaml:"setup"`
-	Expected string `yaml:"expected"`
+type ProblemMetaTest struct {
+	Name     string `json:"name" yaml:"name"`
+	Setup    string `json:"setup" yaml:"setup"`
+	Expected string `json:"expected" yaml:"expected"`
 }
 
 func LoadProblemsMeta() (map[string]*ProblemMeta, error) {

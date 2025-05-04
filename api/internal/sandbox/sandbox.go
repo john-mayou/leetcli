@@ -7,17 +7,94 @@ import (
 	"time"
 )
 
-func Runner(script string) (string, string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+type ErrReason string
+
+const (
+	ErrReasonTimeout      = "timeout"
+	ErrReasonMismatch     = "mismatch"
+	ErrReasonRuntimeError = "runtime-error"
+)
+
+type SandboxResult struct {
+	Success     bool
+	TestResults []SandboxTestResult
+}
+
+type SandboxTestResult struct {
+	Test      ProblemMetaTest
+	ErrReason string
+	ExitCode  int
+	Stdout    string
+	Stderr    string
+}
+
+type SandboxOpts struct {
+	Timeout time.Duration
+}
+
+func Sandbox(meta *ProblemMeta, script string, opts *SandboxOpts) *SandboxResult {
+	ctx, cancel := context.WithTimeout(context.Background(), opts.Timeout)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, "nsjail", "--really_quiet", "--config", "sandbox.cfg", "--", "/bin/bash", "-c", script)
+	success := true
+	results := make([]SandboxTestResult, len(meta.Tests))
+	for i := range meta.Tests {
+		test := meta.Tests[i]
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+		var fullScript string
+		if test.Setup != "" {
+			fullScript = test.Setup + script // setup should have a \n at the end
+		} else {
+			fullScript = script
+		}
 
-	err := cmd.Run()
+		cmd := exec.CommandContext(ctx,
+			"nsjail", "--really_quiet", "--config", "sandbox.cfg",
+			"--", "/bin/bash", "-c", fullScript,
+		)
 
-	return stdout.String(), stderr.String(), err
+		var stdoutBytes, stderrBytes bytes.Buffer
+		cmd.Stdout = &stdoutBytes
+		cmd.Stderr = &stderrBytes
+
+		err := cmd.Run()
+
+		stdout := stdoutBytes.String()
+		stderr := stderrBytes.String()
+
+		exitCode := -1 // default for unknown exit codes
+		if err != nil {
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				exitCode = exitErr.ExitCode()
+			}
+		} else {
+			exitCode = 0
+		}
+
+		errReason := ""
+		if ctx.Err() == context.DeadlineExceeded {
+			errReason = ErrReasonTimeout
+		} else if err != nil {
+			errReason = ErrReasonRuntimeError
+		} else if test.Expected != stdout {
+			errReason = ErrReasonMismatch
+		}
+
+		if exitCode != 0 || errReason != "" {
+			success = false
+		}
+
+		results[i] = SandboxTestResult{
+			Test:      test,
+			ErrReason: errReason,
+			ExitCode:  exitCode,
+			Stdout:    stdout,
+			Stderr:    stderr,
+		}
+	}
+
+	return &SandboxResult{
+		Success:     success,
+		TestResults: results,
+	}
 }

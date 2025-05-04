@@ -1,0 +1,35 @@
+success: false
+testresults:
+- test:
+    name: Single line
+    setup: |
+      cat <<SETUP > sales.csv
+      Item,Quantity,Price
+      1,Book,12.99
+      SETUP
+    expected: |
+      Total: 12.99
+  errreason: runtime-error
+  exitcode: 2
+  stdout: ""
+  stderr: |
+    /bin/bash: -c: line 5: syntax error near unexpected token `&'
+    /bin/bash: -c: line 5: `!&echo something'
+- test:
+    name: Multi line
+    setup: |
+      cat <<SETUP > sales.csv
+      Item,Quantity,Price
+      1,Book,12.99
+      2,Pen,1.50
+      3,Notebook,5.75
+      4,Book,12.99
+      SETUP
+    expected: |
+      Total: 33.23
+  errreason: runtime-error
+  exitcode: 2
+  stdout: ""
+  stderr: |
+    /bin/bash: -c: line 8: syntax error near unexpected token `&'
+    /bin/bash: -c: line 8: `!&echo something'
