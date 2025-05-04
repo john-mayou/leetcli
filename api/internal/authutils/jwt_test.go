@@ -99,6 +99,8 @@ func TestValidateJWT(t *testing.T) {
 }
 
 func generateTokenFromClaims(t *testing.T, cfg *config.Config, claims jwt.MapClaims) string {
+	t.Helper()
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenStr, err := token.SignedString([]byte(cfg.JWTSecret))
 	require.NoError(t, err)

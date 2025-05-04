@@ -32,7 +32,7 @@ func TestSandbox(t *testing.T) {
 			meta, ok := problemsMeta[slug]
 			require.True(t, ok)
 
-			result := sandbox.Sandbox(meta, script, defaultSandboxOpts())
+			result := sandbox.Sandbox(meta, script, defaultSandboxOpts(t))
 
 			assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "problems", slug+"_success.txt"))
 		})
@@ -42,7 +42,7 @@ func TestSandbox(t *testing.T) {
 	require.True(t, ok)
 
 	t.Run("single test case pass", func(t *testing.T) {
-		result := sandbox.Sandbox(calcTotalMeta, "echo 'Total: 12.99'", defaultSandboxOpts())
+		result := sandbox.Sandbox(calcTotalMeta, "echo 'Total: 12.99'", defaultSandboxOpts(t))
 		assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "single-test-pass.txt"))
 	})
 	t.Run("error timeout", func(t *testing.T) {
@@ -50,16 +50,18 @@ func TestSandbox(t *testing.T) {
 		assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "error-timeout.txt"))
 	})
 	t.Run("error mismatch", func(t *testing.T) {
-		result := sandbox.Sandbox(calcTotalMeta, "echo incorrect", defaultSandboxOpts())
+		result := sandbox.Sandbox(calcTotalMeta, "echo incorrect", defaultSandboxOpts(t))
 		assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "error-mismatch.txt"))
 	})
 	t.Run("error runtime-error", func(t *testing.T) {
-		result := sandbox.Sandbox(calcTotalMeta, "!&echo something", defaultSandboxOpts())
+		result := sandbox.Sandbox(calcTotalMeta, "!&echo something", defaultSandboxOpts(t))
 		assertGoldenResult(t, result, filepath.Join("testdata", "sandbox", "error-runtime-error.txt"))
 	})
 }
 
-func defaultSandboxOpts() *sandbox.SandboxOpts {
+func defaultSandboxOpts(t *testing.T) *sandbox.SandboxOpts {
+	t.Helper()
+
 	return &sandbox.SandboxOpts{
 		Timeout: time.Second,
 		Timer:   &sandbox.FakeTimer{FixedMs: 1},
@@ -67,6 +69,8 @@ func defaultSandboxOpts() *sandbox.SandboxOpts {
 }
 
 func assertGoldenResult(t *testing.T, result *sandbox.SandboxResult, filepath string) {
+	t.Helper()
+
 	actual, err := yaml.Marshal(result)
 	require.NoError(t, err)
 

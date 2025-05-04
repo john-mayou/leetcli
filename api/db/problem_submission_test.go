@@ -57,6 +57,8 @@ func TestListProblemSubmissions(t *testing.T) {
 }
 
 func buildFakeProblemSubmission(t *testing.T, client *db.Client) *model.ProblemSubmission {
+	t.Helper()
+
 	user, err := client.CreateUser(testutil.FakeUser())
 	require.NoError(t, err)
 	problem, err := client.CreateProblem(testutil.FakeProblem())
