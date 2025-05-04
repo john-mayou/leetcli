@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,6 +19,8 @@ func TestHealthHandler(t *testing.T) {
 	handler := handler.NewTestHandler(nil)
 	handler.HealthCheck(w, req)
 
+	var actual map[string]interface{}
+	require.NoError(t, json.Unmarshal(w.Body.Bytes(), &actual))
 	require.Equal(t, http.StatusOK, w.Code)
-	require.Equal(t, `{"status": "ok"}`, w.Body.String())
+	require.Equal(t, map[string]interface{}{"status": "ok"}, actual)
 }

@@ -1,0 +1,1 @@
+git checkout stash@{0} -- path/to/your/file

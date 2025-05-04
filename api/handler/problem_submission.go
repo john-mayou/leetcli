@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/john-mayou/leetcli/internal/httpx"
 	"github.com/john-mayou/leetcli/internal/sandbox"
 	"github.com/john-mayou/leetcli/model"
 )
@@ -74,10 +75,7 @@ func (h *Handler) SubmitProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(result); err != nil {
-		http.Error(w, fmt.Sprintf("error marshaling sandbox result: %v", err), http.StatusInternalServerError)
-	}
+	httpx.WriteJSON(w, http.StatusOK, result)
 }
 
 func mapSandboxStatusToSubmissionStatus(status sandbox.SandboxResultStatus) (model.ProblemSubmissionStatus, error) {

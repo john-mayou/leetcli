@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/john-mayou/leetcli/internal/httpx"
 )
 
 func (h *Handler) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
@@ -18,13 +19,5 @@ func (h *Handler) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonData, err := json.Marshal(user)
-	if err != nil {
-		http.Error(w, "could not marshal user to JSON", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonData)
+	httpx.WriteJSON(w, http.StatusOK, user)
 }

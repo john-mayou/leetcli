@@ -1,9 +1,11 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/john-mayou/leetcli/internal/httpx"
+)
 
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status": "ok"}`))
+	httpx.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
