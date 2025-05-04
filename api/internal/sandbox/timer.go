@@ -14,7 +14,7 @@ type RealTimer struct {
 }
 
 func (t *RealTimer) Start()         { t.start = t.Now() }
-func (t *RealTimer) ElapsedMs() int { return int(time.Since(t.start).Milliseconds()) }
+func (t *RealTimer) ElapsedMs() int { return int(t.Now().Sub(t.start).Milliseconds()) }
 
 type FakeTimer struct {
 	FixedMs int
