@@ -38,6 +38,22 @@ func TestProblemCRUD(t *testing.T) {
 	require.False(t, deletedProblem.DeletedAt.IsZero())
 }
 
+func TestFindProblemBySlug(t *testing.T) {
+	client := testutil.SetupTestClient(t)
+
+	problem := testutil.FakeProblem()
+	problem.Slug = "slug-123"
+
+	// create
+	problem, err := client.CreateProblem(problem)
+	require.NoError(t, err)
+
+	// find
+	foundProblem, err := client.FindProblemBySlug("slug-123")
+	require.NoError(t, err)
+	assertProblemEqual(t, problem, foundProblem)
+}
+
 func TestListProblems(t *testing.T) {
 	client := testutil.SetupTestClient(t)
 

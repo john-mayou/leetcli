@@ -30,6 +30,20 @@ func (c *Client) FindProblemByID(id string) (*model.Problem, error) {
 	return &problem, nil
 }
 
+func (c *Client) FindProblemBySlug(slug string) (*model.Problem, error) {
+	query := `
+    SELECT *
+    FROM problems
+    WHERE slug = $1;
+  `
+	var problem model.Problem
+	err := c.DB.Get(&problem, query, slug)
+	if err != nil {
+		return nil, err
+	}
+	return &problem, nil
+}
+
 func (c *Client) UpdateProblem(problem *model.Problem) error {
 	query := `
 		UPDATE problems
