@@ -29,7 +29,7 @@ services:
         cd api && go test ./... -v $${UPDATE:+-UPDATE}; \
       '
     environment:
-      - UPDATE=${UPDATE}
+      - UPDATE=${UPDATE:-}
       - ENV=test
       - PORT=8080
       - DATABASE_URL=postgres://postgres:password@db:5432/leetcli_test?sslmode=disable
