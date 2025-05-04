@@ -39,7 +39,7 @@ func TestGetProblems(t *testing.T) {
 
 	golden := "testdata/GetProblems.txt"
 	if *testutil.Update {
-		os.WriteFile(golden, actual, 0644)
+		require.NoError(t, os.WriteFile(golden, actual, 0644))
 	}
 
 	expected, err := os.ReadFile(golden)
