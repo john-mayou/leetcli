@@ -54,6 +54,23 @@ func TestFindUserByGithubID(t *testing.T) {
 	assertUserEqual(t, user, foundUser)
 }
 
+func TestListUsers(t *testing.T) {
+	client := testutil.SetupTestClient(t)
+
+	userA, err := client.CreateUser(testutil.FakeUser())
+	require.NoError(t, err)
+	userB, err := client.CreateUser(testutil.FakeUser())
+	require.NoError(t, err)
+
+	users, err := client.ListUsers()
+	require.NoError(t, err)
+	require.Len(t, users, 2)
+
+	ids := []string{users[0].ID, users[1].ID}
+	require.Contains(t, ids, userA.ID)
+	require.Contains(t, ids, userB.ID)
+}
+
 func assertUserEqual(t *testing.T, expected, actual *model.User) {
 	t.Helper()
 

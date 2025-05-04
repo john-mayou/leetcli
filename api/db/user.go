@@ -72,3 +72,17 @@ func (c *Client) DeleteUser(id string) error {
 	_, err := c.DB.Exec(query, id)
 	return err
 }
+
+func (c *Client) ListUsers() ([]*model.User, error) {
+	query := `
+		SELECT *
+		FROM users
+		WHERE deleted_at IS NULL
+	`
+	var users []*model.User
+	err := c.DB.Select(&users, query)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
